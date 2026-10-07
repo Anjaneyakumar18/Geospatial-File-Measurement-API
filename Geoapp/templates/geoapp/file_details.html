@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>File Details</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        nav {
+            background: #111827;
+            color: white;
+            padding: 20px 50px;
+        }
+
+        nav h2 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 50px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .id-box {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 7px;
+            word-break: break-all;
+            font-family: monospace;
+            margin-bottom: 25px;
+        }
+
+        .row {
+            padding: 14px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav>
+
+    <h2>Geospatial Analyzer</h2>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <a href="{% url 'home' %}">
+            ← Back to Home
+        </a>
+
+        <h1>File Details</h1>
+
+
+        <h3>File ID</h3>
+
+        <div class="id-box">
+
+            {{ file.id }}
+
+        </div>
+
+
+        <div class="row">
+
+            <strong>Filename:</strong>
+
+            {{ file.filename }}
+
+        </div>
+
+
+        <div class="row">
+
+            <strong>Status:</strong>
+
+            {{ file.status }}
+
+        </div>
+
+
+        <div class="row">
+
+            <strong>Feature Count:</strong>
+
+            {{ file.feature_count }}
+
+        </div>
+
+
+        <div class="row">
+
+            <strong>Original CRS:</strong>
+
+            {{ file.crs|default:"Unknown" }}
+
+        </div>
+
+
+        <div class="row">
+
+            <strong>Measurement CRS:</strong>
+
+            {{ file.measurement_crs|default:"Not available" }}
+
+        </div>
+
+
+        <div class="row">
+
+            <strong>Created At:</strong>
+
+            {{ file.created_at }}
+
+        </div>
+
+
+        {% if file.error_message %}
+
+        <div class="row">
+
+            <strong>Error:</strong>
+
+            {{ file.error_message }}
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

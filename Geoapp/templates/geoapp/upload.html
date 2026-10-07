@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Geospatial Measurement API</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .container {
+            width: 600px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+        }
+
+        form {
+            margin-top: 30px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            background: #222;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #444;
+        }
+
+        .info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Geospatial File Measurement</h1>
+
+    <p>
+        Upload a KML file or a ZIP containing a Shapefile.
+    </p>
+
+    <form
+        method="POST"
+        action="/api/files/"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+        <input
+            type="file"
+            name="file"
+            accept=".kml,.zip"
+            required
+        >
+
+        <button type="submit">
+            Upload File
+        </button>
+
+    </form>
+
+    <div class="info">
+
+        <strong>Supported:</strong>
+
+        <ul>
+            <li>KML</li>
+            <li>ZIP Shapefile</li>
+            <li>Polygon → Area</li>
+            <li>LineString → Length</li>
+            <li>Point → No measurement</li>
+        </ul>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

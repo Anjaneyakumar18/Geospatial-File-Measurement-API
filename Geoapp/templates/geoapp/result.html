@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>
+        Geospatial Results
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        nav {
+            background: #111827;
+            color: white;
+            padding: 20px 50px;
+        }
+
+        nav h2 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .id-box {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 7px;
+            word-break: break-all;
+
+            font-family: monospace;
+        }
+
+        .feature {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+
+        .measurement {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .property {
+            margin-left: 10px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav>
+
+    <h2>
+        Geospatial Analyzer
+    </h2>
+
+</nav>
+
+
+<div class="container">
+
+
+    <div class="card">
+
+
+        <a href="{% url 'home' %}">
+
+            ← Upload another file
+
+        </a>
+
+
+        <h2>
+            File Information
+        </h2>
+
+
+        <p>
+            <strong>
+                File ID:
+            </strong>
+        </p>
+
+
+        <div class="id-box">
+
+            {{ file.id }}
+
+        </div>
+
+
+        <p>
+
+            <strong>
+                Filename:
+            </strong>
+
+            {{ file.filename }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Status:
+            </strong>
+
+            {{ file.status }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Feature Count:
+            </strong>
+
+            {{ file.feature_count }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Original CRS:
+            </strong>
+
+            {{ file.crs }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Measurement CRS:
+            </strong>
+
+            {{ file.measurement_crs }}
+
+        </p>
+
+
+    </div>
+
+
+    {% if result %}
+
+
+    <div class="card">
+
+
+        <h2>
+            Measurements
+        </h2>
+
+
+        {% for feature in result.features %}
+
+
+        <div class="feature">
+
+
+            <p>
+
+                <strong>
+                    Feature ID:
+                </strong>
+
+                {{ feature.feature_id }}
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Geometry Type:
+                </strong>
+
+                {{ feature.geometry_type }}
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    CRS:
+                </strong>
+
+                {{ feature.crs }}
+
+            </p>
+
+
+            {% if feature.measurement != None %}
+
+
+                <p class="measurement">
+
+                    {{ feature.measurement|floatformat:2 }}
+
+                    {{ feature.unit }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+
+                        {{ feature.measurement_type }}
+
+                    </strong>
+
+                </p>
+
+
+            {% else %}
+
+
+                <p>
+
+                    No measurement required.
+
+                </p>
+
+
+            {% endif %}
+
+
+            {% if feature.properties %}
+
+
+                <h4>
+                    Properties
+                </h4>
+
+
+                {% for key, value in feature.properties.items %}
+
+
+                    <p class="property">
+
+                        <strong>
+                            {{ key }}:
+                        </strong>
+
+                        {{ value }}
+
+                    </p>
+
+
+                {% endfor %}
+
+
+            {% endif %}
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+    {% endif %}
+
+
+</div>
+
+
+</body>
+
+</html>

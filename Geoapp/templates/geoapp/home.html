@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Geospatial Analyzer</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        nav {
+            background: #111827;
+            color: white;
+            padding: 20px 50px;
+        }
+
+        nav h2 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 60px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.08);
+
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 13px 25px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #result {
+            display: none;
+        }
+
+        .id-box {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 7px;
+            word-break: break-all;
+            font-family: monospace;
+            margin-bottom: 25px;
+        }
+
+        .links {
+            display: grid;
+            gap: 15px;
+        }
+
+        .links a {
+            display: block;
+            padding: 15px 18px;
+            border-radius: 8px;
+            background: #f3f4f6;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            background: #e5e7eb;
+        }
+
+        .success {
+            color: #15803d;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .info {
+            color: #555;
+        }
+
+        .section-title {
+            margin-bottom: 10px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav>
+
+    <h2>
+        Geospatial Analyzer
+    </h2>
+
+</nav>
+
+
+<div class="container">
+
+
+    <!-- ================================================= -->
+    <!-- UPLOAD -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h1>
+            Upload Geospatial File
+        </h1>
+
+        <p class="info">
+
+            Upload a KML file or ZIP containing
+            a Shapefile.
+
+        </p>
+
+
+        <form id="uploadForm">
+
+            {% csrf_token %}
+
+            <input
+                type="file"
+                id="fileInput"
+                name="file"
+                accept=".kml,.zip"
+                required
+            >
+
+
+            <button type="submit">
+
+                Upload & Process
+
+            </button>
+
+        </form>
+
+
+        <p id="message"></p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SUCCESS -->
+    <!-- ================================================= -->
+
+    <div
+        class="card"
+        id="result"
+    >
+
+        <h2 class="success">
+
+            File Uploaded Successfully
+
+        </h2>
+
+
+        <p>
+
+            Your file has been processed successfully.
+
+        </p>
+
+
+        <!-- FILE ID -->
+
+        <h3 class="section-title">
+
+            File ID
+
+        </h3>
+
+
+        <div
+            class="id-box"
+            id="fileId"
+        ></div>
+
+
+        <!-- RESULT LINKS -->
+
+        <h3>
+
+            View Results
+
+        </h3>
+
+
+        <div class="links">
+
+
+            <!-- FILE DETAILS -->
+
+            <a
+                id="detailLink"
+                target="_blank"
+            >
+
+                📄 View File Details
+
+            </a>
+
+
+            <!-- MEASUREMENTS -->
+
+            <a
+                id="measurementLink"
+                target="_blank"
+            >
+
+                📐 View Measurements
+
+            </a>
+
+
+            <!-- COMPLETE RESULT -->
+
+            <a
+                id="resultLink"
+                target="_blank"
+            >
+
+                🗺️ View Complete Results
+
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+const form =
+    document.getElementById(
+        "uploadForm"
+    );
+
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+
+const resultBox =
+    document.getElementById(
+        "result"
+    );
+
+
+const fileId =
+    document.getElementById(
+        "fileId"
+    );
+
+
+const detailLink =
+    document.getElementById(
+        "detailLink"
+    );
+
+
+const measurementLink =
+    document.getElementById(
+        "measurementLink"
+    );
+
+
+const resultLink =
+    document.getElementById(
+        "resultLink"
+    );
+
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const fileInput =
+            document.getElementById(
+                "fileInput"
+            );
+
+
+        if (
+            !fileInput.files.length
+        ) {
+
+            message.textContent =
+                "Please select a file.";
+
+            message.className =
+                "error";
+
+            return;
+        }
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            fileInput.files[0]
+        );
+
+
+        message.textContent =
+            "Uploading and processing...";
+
+        message.className =
+            "";
+
+
+        resultBox.style.display =
+            "none";
+
+
+        try {
+
+
+            // =================================================
+            // API 1
+            // POST /api/files/
+            // =================================================
+
+            const response =
+                await fetch(
+                    "/api/files/",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    "Upload failed."
+                );
+
+            }
+
+
+            // =================================================
+            // SHOW DATABASE UUID
+            // =================================================
+
+            fileId.textContent =
+                data.id;
+
+
+            // =================================================
+            // FILE DETAILS
+            // GET /api/files/{id}/
+            // =================================================
+
+            detailLink.href =
+             `/file-details/${data.id}/`;
+
+            measurementLink.href =
+             `/measurements/${data.id}/`;
+
+            resultLink.href =
+               `/result/${data.id}/`;
+
+
+            // =================================================
+            // SHOW SUCCESS CARD
+            // =================================================
+
+            resultBox.style.display =
+                "block";
+
+
+            message.textContent =
+                "Upload successful.";
+
+            message.className =
+                "success";
+
+
+        }
+
+        catch (error) {
+
+            message.textContent =
+                error.message;
+
+            message.className =
+                "error";
+
+
+            resultBox.style.display =
+                "none";
+
+        }
+
+    }
+
+);
+
+</script>
+
+
+</body>
+
+</html>

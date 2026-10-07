@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Measurements</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        nav {
+            background: #111827;
+            color: white;
+            padding: 20px 50px;
+        }
+
+        nav h2 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 50px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .feature {
+            border: 1px solid #ddd;
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .measurement {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .success {
+            color: #15803d;
+        }
+
+        .none {
+            color: #666;
+        }
+
+        .property {
+            margin-left: 15px;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav>
+
+    <h2>Geospatial Analyzer</h2>
+
+</nav>
+
+
+<div class="container">
+
+
+    <div class="card">
+
+        <a href="{% url 'home' %}">
+            ← Back to Home
+        </a>
+
+        <h1>Measurements</h1>
+
+        <p>
+
+            <strong>File:</strong>
+
+            {{ file.filename }}
+
+        </p>
+
+        <p>
+
+            <strong>File ID:</strong>
+
+            {{ file.id }}
+
+        </p>
+
+        <p>
+
+            <strong>Original CRS:</strong>
+
+            {{ file.crs }}
+
+        </p>
+
+        <p>
+
+            <strong>Measurement CRS:</strong>
+
+            {{ file.measurement_crs }}
+
+        </p>
+
+    </div>
+
+
+    {% if result %}
+
+        {% for feature in result.features %}
+
+
+        <div class="card feature">
+
+            <h2>
+
+                Feature {{ feature.feature_id }}
+
+            </h2>
+
+
+            <p>
+
+                <strong>
+                    Geometry Type:
+                </strong>
+
+                {{ feature.geometry_type }}
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    CRS:
+                </strong>
+
+                {{ feature.crs }}
+
+            </p>
+
+
+            {% if feature.measurement != None %}
+
+                <div class="measurement success">
+
+                    {{ feature.measurement|floatformat:2 }}
+
+                    {{ feature.unit }}
+
+                </div>
+
+
+                <p>
+
+                    <strong>
+                        Measurement Type:
+                    </strong>
+
+                    {{ feature.measurement_type }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Status:
+                    </strong>
+
+                    {{ feature.status }}
+
+                </p>
+
+            {% else %}
+
+                <div class="measurement none">
+
+                    No measurement required.
+
+                </div>
+
+
+                <p>
+
+                    <strong>
+                        Status:
+                    </strong>
+
+                    {{ feature.status }}
+
+                </p>
+
+            {% endif %}
+
+
+            {% if feature.properties %}
+
+                <h3>
+                    Properties
+                </h3>
+
+
+                {% for key, value in feature.properties.items %}
+
+                    <p class="property">
+
+                        <strong>
+                            {{ key }}:
+                        </strong>
+
+                        {{ value }}
+
+                    </p>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+        </div>
+
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card">
+
+            <p>
+                Measurements are not available.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+</body>
+
+</html>
