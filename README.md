@@ -149,7 +149,7 @@ py --version
 ## Step 1: Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/Anjaneyakumar18/Geospatial-File-Measurement-API.git
 ```
 
 Move into the project:
